@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: go
+  namespace: deboerrh
+spec:
+  replicas: 1
+  selector: {}
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - image: quay.io/redhat-appstudio/user-workload@sha256:dd4ed9bc79b388801746687735ba037e61100425df478e6e1995f5e3a441b0a2
+        name: container-image
+        resources: {}
+status: {}

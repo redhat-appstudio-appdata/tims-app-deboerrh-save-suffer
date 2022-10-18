@@ -1,0 +1,51 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  creationTimestamp: null
+  name: go
+  namespace: deboerrh
+spec:
+  params:
+  - name: git-revision
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      annotations:
+        build.appstudio.openshift.io/application: tims-app
+        build.appstudio.openshift.io/build: "true"
+        build.appstudio.openshift.io/component: go
+        build.appstudio.openshift.io/type: build
+        build.appstudio.openshift.io/version: "0.1"
+        pipelines.appstudio.openshift.io/type: build
+      creationTimestamp: null
+      generateName: go-
+      labels:
+        build.appstudio.openshift.io/application: tims-app
+        build.appstudio.openshift.io/build: "true"
+        build.appstudio.openshift.io/component: go
+        build.appstudio.openshift.io/type: build
+        build.appstudio.openshift.io/version: "0.1"
+        pipelines.appstudio.openshift.io/type: build
+      namespace: deboerrh
+    spec:
+      params:
+      - name: git-url
+        value: https://github.com/devfile-samples/devfile-stack-go.git
+      - name: output-image
+        value: quay.io/redhat-appstudio/user-workload:deboerrh-go-$(tt.params.git-revision)
+      - name: dockerfile
+        value: https://raw.githubusercontent.com/devfile-samples/devfile-sample-go-basic/main/docker/Dockerfile
+      pipelineRef:
+        bundle: quay.io/redhat-appstudio/build-templates-bundle:13f5d9c921b3f727684a00084037f673a0dc4273
+        name: docker-build
+      workspaces:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: appstudio
+        subPath: go/$(tt.params.git-revision)
+      - name: registry-auth
+        secret:
+          secretName: redhat-appstudio-registry-pull-secret
+    status: {}
+status: {}
